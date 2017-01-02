@@ -125,7 +125,7 @@ dragLayer.onDragEnd ->
 			dragLayer.animate("active")
 			navLayer.animateState("active")
 	else
-		# animate in the reverse when the opposite is true
+		# reverse animate when the opposite is true
 		dragLayer.animate("default")
 		acceleratorsLayer.animate("default")
 		searchBarLayer.animate("default")
