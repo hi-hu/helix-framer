@@ -61,12 +61,16 @@ class NavLayer extends Layer
     @labelLayer.animate(navState)
 
   modulateState: (yValue) ->
-    if yValue >= 240
-      @labelLayer.y = Utils.modulate(yValue, [1184,240], [344,144])
-      @opacity = Utils.modulate(yValue, [prefs.screenHeight / 2,904], [1,0])
+    if yValue >= 96
+      @labelLayer.y = Utils.modulate(yValue, [1040,0], [344,144])
+      @opacity = Utils.modulate(yValue, [700,200], [0,1])
+    else if yValue >= 0
+      @labelLayer.props = 
+        x: Utils.modulate(yValue, [96,0], [44,80])
+        y: Utils.modulate(yValue, [96,0], [144,66])
+        scale: Utils.modulate(yValue, [96,0], [1,0.75])
     else
-      @labelLayer.x = Utils.modulate(yValue, [240,144], [44,80])
-      @labelLayer.y = Utils.modulate(yValue, [240,144], [144,66])
-      @labelLayer.scale = Utils.modulate(yValue, [240,144], [1,0.75])
+      @labelLayer.props =
+        x: 80, y: 66, scale: 0.75
 
   module.exports = NavLayer
