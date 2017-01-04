@@ -52,6 +52,8 @@ class HelixCard extends Layer
 		super _.defaults options,
 			borderRadius: 8
 			backgroundColor: "#FFF"
+		@style = 
+			"width": "100%"
 	# can we define the 100% width stuff in here
 	# a helix card is generic and should be unopinionated about width as there are also cards that do not have 100% width
 
@@ -73,13 +75,10 @@ scrollLayer.states =
 		y: 0
 	default: 
 		x: 32
-		width: 686
 
 # set content layer to be referenced by dragLayer 
 dragLayer = scrollLayer.content
 dragLayer.states =
-	max:
-		y: 0
 	active:
 		y: 96
 	default:
@@ -88,14 +87,13 @@ dragLayer.states =
 ###	Listeners
 -----------------------------------------------------------------------###
 scrollLayer.onScroll ->
-# 	print navLayer.labelLayer.y + " " + dragLayer.y
 	yValue = dragLayer.y
 	modulatedYValue = Utils.modulate(yValue, [0,1040], [0.65,1])
 	navLayer.modulateState(yValue)
 	acceleratorsLayer.scale = modulatedYValue
 	searchBarLayer.scale = modulatedYValue
 	blackBG.opacity = Utils.modulate(yValue, [prefs.screenHeight / 2 + 200,1040], [1,0])
-# if the yValue is between the default and greater than 67% of the height, scale the cards
+	# Animate content to be full width of Device
 	if yValue >= prefs.screenHeight * 0.67
 		scrollLayer.width = Utils.modulate(yValue, [900,1040], [750,686])
 		scrollLayer.midX = prefs.screenWidth / 2
@@ -103,14 +101,9 @@ scrollLayer.onScroll ->
 # onDragEnd animate to the appropriate positions
 scrollLayer.onScrollEnd ->
 	yValue = dragLayer.y
-	print yValue
 	if yValue < prefs.screenHeight / 2
 		if yValue < 56
-			dragLayer.animate("max")
 			navLayer.animateState("collapsed")
-			scrollLayer.scrollVertical = true
-			# do not pass event to parent (dragLayer)
-			scrollLayer.propagateEvents = false
 		else 
 			dragLayer.animate("active")
 			navLayer.animateState("active")
@@ -119,36 +112,20 @@ scrollLayer.onScrollEnd ->
 		acceleratorsLayer.animate("default")
 		searchBarLayer.animate("default")
 		blackBG.animate("default")
-		scrollLayer.animate("default")
 		navLayer.animateState("default")
-
-###	scrollLayer Listeners
------------------------------------------------------------------------###
-# scrollLayer.content.draggable.overdrag = false
-
-scrollLayer.content.onDrag ->
-# if dragging beyond constraints AND direction is down then
-# 	print scrollLayer.content.draggable.offset
-# 	if scrollLayer.content.draggable.isBeyondConstraints and
-# 	scrollLayer.content.draggable.direction == "down"
-# 		scrollLayer.scrollVertical = false
-# 		scrollLayer.propagateEvents = true
-		# take the delta in the Y direction and pass it to the drag layer.
-# 		dragLayer.y += scrollLayer.content.draggable.offset.y
 
 ###	Playground
 -----------------------------------------------------------------------###
-feedCard = new HelixCard
-	height: 200
-	parent: scrollLayer.content
-# when inspecting the DOM the width is shorter than 100%
-feedCard.style =
-		"width": "100%"
+bgColors = ["white","pink","orange"]
+
+for n in [0...3]
+	@layer = new HelixCard
+	@layer.props =
+		height: 600
+		y: 620 * n
+		backgroundColor: bgColors[n]
+		parent: scrollLayer.content
 
 ###
 Create functions to handle the animations/transitions
-------------------------------------------------------
-Remove dragLayer and only use scrollLayer's content (draggable). 
-	- This would mean that the scrollLayer is set to the device view
-	- the initial position of the contents would be offset like it currently is
 ###
