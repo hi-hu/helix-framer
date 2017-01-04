@@ -65,8 +65,6 @@ scrollLayer = new ScrollComponent
 	y: 144
 	midX: prefs.screenWidth / 2
 	scrollHorizontal: false
-# 	scrollVertical: false
-# 	parent: dragLayer
 scrollLayer.contentInset =
 	# default position
 	top: prefs.screenHeight - 294
@@ -103,6 +101,7 @@ scrollLayer.onScrollEnd ->
 	yValue = dragLayer.y
 	if yValue < prefs.screenHeight / 2
 		if yValue < 56
+		# bug: if dragLayer animates("max") then cannot scroll. without it won't bounce when within the threshold
 			navLayer.animateState("collapsed")
 		else 
 			dragLayer.animate("active")
