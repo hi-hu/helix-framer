@@ -26,6 +26,7 @@ prefs =
 helixCardGutter = prefs.spacingUnit * 4
 
 NavLayer = require "navLayer"
+HelixFeed = require "helixFeed"
 
 # Layers
 acceleratorsLayer = sketch.accelerators
@@ -37,6 +38,7 @@ blackBG = new Layer
 	opacity: 0
 navLayer = new NavLayer
 	labelString: "Messages"
+helixFeed = new HelixFeed
 
 # Layer States
 acceleratorsLayer.states = 
@@ -57,57 +59,31 @@ class HelixCard extends Layer
 	# can we define the 100% width stuff in here
 	# a helix card is generic and should be unopinionated about width as there are also cards that do not have 100% width
 
-###	Scroll Layer (nested inside dragLayer)
------------------------------------------------------------------------###
-scrollLayer = new ScrollComponent
-	width: prefs.screenWidth - helixCardGutter * 2
-	height: prefs.screenHeight - 144
-	y: 144
-	midX: prefs.screenWidth / 2
-	scrollHorizontal: false
-scrollLayer.contentInset =
-	# default position
-	top: prefs.screenHeight - 294
-scrollLayer.states =
-	active:
-		y: 0
-	default: 
-		x: 32
-
-# set content layer to be referenced by dragLayer 
-dragLayer = scrollLayer.content
-dragLayer.states =
-	active:
-		y: 96
-	default:
-		y: prefs.screenHeight - 294
 
 ###	Listeners
 -----------------------------------------------------------------------###
-scrollLayer.onScroll ->
-	yValue = dragLayer.y
+helixFeed.onScroll ->
+	yValue = helixFeed.content.y
 	modulatedYValue = Utils.modulate(yValue, [0,1040], [0.65,1])
 	navLayer.modulateState(yValue)
 	acceleratorsLayer.scale = modulatedYValue
 	searchBarLayer.scale = modulatedYValue
 	blackBG.opacity = Utils.modulate(yValue, [prefs.screenHeight / 2 + 200,1040], [1,0])
-	# Animate content to be full width of Device
-	if yValue >= prefs.screenHeight * 0.67
-		scrollLayer.width = Utils.modulate(yValue, [900,1040], [750,686])
-		scrollLayer.midX = prefs.screenWidth / 2
+# 	if yValue >= prefs.screenHeight * 0.67
+# 		scrollLayer.width = Utils.modulate(yValue, [900,1040], [750,686])
+# 		scrollLayer.midX = prefs.screenWidth / 2
 
-# onDragEnd animate to the appropriate positions
-scrollLayer.onScrollEnd ->
-	yValue = dragLayer.y
+helixFeed.onScrollEnd ->
+	yValue = helixFeed.content.y
 	if yValue < prefs.screenHeight / 2
 		if yValue < 56
 		# bug: if dragLayer animates("max") then cannot scroll. without it won't bounce when within the threshold
 			navLayer.animateState("collapsed")
 		else 
-			dragLayer.animate("active")
+# 			dragLayer.animate("active")
 			navLayer.animateState("active")
 	else
-		dragLayer.animate("default")
+# 		dragLayer.animate("default")
 		acceleratorsLayer.animate("default")
 		searchBarLayer.animate("default")
 		blackBG.animate("default")
@@ -123,7 +99,7 @@ for n in [0...3]
 		height: 600
 		y: 620 * n
 		backgroundColor: bgColors[n]
-		parent: scrollLayer.content
+		parent: helixFeed.content
 
 ###
 Create functions to handle the animations/transitions
