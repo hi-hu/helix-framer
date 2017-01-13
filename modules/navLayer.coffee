@@ -20,9 +20,6 @@ class NavLayer extends Layer
       @options.height ?= 240
       @options.labelString ?= "Default"
 
-    # @onClick ->
-    #   @setState()
-
     @states =
       collapsed:
         height: 144
@@ -56,6 +53,7 @@ class NavLayer extends Layer
 
     @animateState("default")
     
+  # animateState must be passed a string value that matches one of the class' states
   animateState: (navState) ->
     @animate(navState)
     @labelLayer.animate(navState)
