@@ -48,7 +48,7 @@ searchBarLayer.states =
 blackBG.states =
 	default: opacity: 0
 
-# need to create a card within the context of feed, so will ask for a feed object in the constructor. Without it, will just display in the middle and no ability to scroll
+# Temp class for testing
 class HelixCard extends Layer
 	constructor: (options) ->
 		super _.defaults options,
@@ -56,9 +56,6 @@ class HelixCard extends Layer
 			backgroundColor: "#FFF"
 		@style = 
 			"width": "100%"
-	# can we define the 100% width stuff in here
-	# a helix card is generic and should be unopinionated about width as there are also cards that do not have 100% width
-
 
 ###	Listeners
 -----------------------------------------------------------------------###
@@ -69,9 +66,6 @@ helixFeed.onScroll ->
 	acceleratorsLayer.scale = modulatedYValue
 	searchBarLayer.scale = modulatedYValue
 	blackBG.opacity = Utils.modulate(yValue, [prefs.screenHeight / 2 + 200,1040], [1,0])
-# 	if yValue >= prefs.screenHeight * 0.67
-# 		scrollLayer.width = Utils.modulate(yValue, [900,1040], [750,686])
-# 		scrollLayer.midX = prefs.screenWidth / 2
 
 helixFeed.onScrollEnd ->
 	yValue = helixFeed.content.y
@@ -80,10 +74,8 @@ helixFeed.onScrollEnd ->
 		# bug: if dragLayer animates("max") then cannot scroll. without it won't bounce when within the threshold
 			navLayer.animateState("collapsed")
 		else 
-# 			dragLayer.animate("active")
 			navLayer.animateState("active")
 	else
-# 		dragLayer.animate("default")
 		acceleratorsLayer.animate("default")
 		searchBarLayer.animate("default")
 		blackBG.animate("default")
